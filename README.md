@@ -1,112 +1,92 @@
-Welcome to Luna, the Smart Home AI Assistant Bot!
-This project connects a Telegram bot to OpenAI's ChatGPT API, allowing natural conversation without rigid commands.
-It is built to be modular, scalable, and professional — ready to add Smart Home features, image recognition, voice transcription, and more.
+Luna
 
-🚀 Features
-/start — Welcome message.
+Home AI Hub (Luna) is a modular, AI-powered smart home assistant designed to integrate with Home Assistant OS. It connects multiple intelligent modules like ChatGPT, Whisper (voice-to-text), and YOLO (object detection), enabling users to control and monitor their smart home via platforms like Telegram or future custom interfaces.
 
-/help — Shows available features.
+---
 
-Normal text chatting — No commands needed, just talk naturally.
+✨ Features
 
-Voice message handling — Send a voice recording, bot echoes it back.
+- ChatGPT-driven AI assistant ("Luna") with memory
+- Telegram integration for two-way natural language interaction
+- Voice transcription with Whisper
+- Object detection support via YOLO (extensible)
+- REST API control of Home Assistant (switches, sensors, scenes)
+- Plug-and-play architecture for adding or removing AI modules
 
-Fully modular structure — Easy to add new services like Image AI, Voice-to-Text AI later.
+---
 
-Scalable — Clean separation between handlers (interaction) and services (processing).
+🧱 Project Structure
 
-HomeAI/
-├── .venv/ # Your virtual Python environment (isolated libraries)
-├── bot/ # All your actual project code
-│ ├── **init**.py # (Makes this folder a Python package)
-│ ├── main.py # (Entry point to start the bot)
-│ ├── config.py # (All your secret API keys and settings)
-│ ├── handlers/ # (All code that reacts to messages)
-│ │ ├── start.py
-│ │ ├── help.py
-│ │ ├── text_chatgpt.py
-│ │ └── voice_echo.py
-│ ├── services/ # (All code that calls external AI models or APIs)
-│ ├── chatgpt_service.py
-│ ├── image_recognition_service.py (future)
-├── requirements.txt # (List of libraries you need)
-└── README.md # (Documentation about your project)
+main.py  
+Entry point that loads configuration, starts the router, and launches the primary interface (Telegram, etc.).
 
-🛠️ How to Run
+core/  
+Houses the brain logic, conversation memory, intent parsing, and routing between modules.
 
-1. Clone the project (or set up your folder manually).
+services/  
+Handles all third-party integrations like OpenAI, Whisper API, MQTT, and Home Assistant REST API.
 
-2. Create a .venv and activate it.
-   python3 -m venv .venv
-   source .venv/bin/activate
+modules/  
+Self-contained interface modules like telegram_interface, whisper_transcriber, ha_connector, and more.
 
-3. Install dependencies:
+configs/  
+Stores environment loading and secrets config logic (e.g., tokens, URLs).
+
+tests/  
+Optional test files for validating services and core logic.
+
+---
+
+⚙️ Setup
+
+1. Clone this repository
+
+2. Create a virtual environment
+
+   python3 -m venv venv
+   source venv/bin/activate
+
+3. Install dependencies
+
    pip install -r requirements.txt
 
-4.Set up your API keys in bot/config.py:
-BOT_TOKEN = "your-telegram-bot-token"
-OPENAI_API_KEY = "your-openai-api-key"
+4. Create a .env file in the project root:
 
-5.Run the bot:
-./.venv/bin/python bot/main.py
-✅ Bot will print Bot is running... when successful.
+   BOT_TOKEN=your_telegram_bot_token
+   OPENAI_API_KEY=your_openai_key
+   HA_TOKEN=your_home_assistant_token
+   HA_URL=
 
-✨ How Handlers and Services are Separated
-Handlers deal with user inputs (text, voice, photo).
+5. Run the assistant
 
-Services deal with external AI processing (ChatGPT, Image Recognition, Voice Transcription).
+   python main.py
 
-This separation makes it easy to add new features without touching unrelated code.
+---
 
-🛤️ Scalability Example
-In the future, you can add:
+🔌 Add a New Module
 
-Chat with ChatGPT ✅ (already done)
+To add new AI capability (e.g., face recognition, image captioning), create a folder in modules/, write its logic, and update the router to route relevant inputs.
 
-Analyze uploaded images using DALL-E or Vision AI ✅ (add image_recognition_service.py)
+Modules are hot-swappable and do not require changes to core logic if you follow the existing interface patterns.
 
-Transcribe voice recordings to text using Whisper ✅ (add voice_to_text_service.py)
+---
 
-WITHOUT touching main.py too much.
+🚀 Deployment
 
-Just:
+- Use start_bot.sh to run the project at boot or via crontab
+- Docker support coming soon for full containerization
+- Remote access supported via Home Assistant + DuckDNS + HTTPS
 
-Add a new service in services/
+---
 
-Add a new handler in handlers/
+📌 Notes
 
-Connect them briefly in main.py
+- This project assumes Home Assistant OS is running on the same network
+- All ESP32 devices should be registered via MQTT or ESPHome and managed by HA
+- This is a local-first design with optional remote features
 
-✅ Your architecture is already ready for smart home commands, AI recognition, security detection, and more.
+---
 
-🧠 Core Responsibilities
-bot/main.py — Starts the app, connects all handlers.
+🤖 Credits
 
-bot/config.py — Stores API keys and settings.
-
-bot/handlers/ — Handles user interactions like text, voice, commands.
-
-bot/services/ — Processes AI tasks like calling ChatGPT or Vision models.
-
-.venv/ — Keeps dependencies isolated.
-
-requirements.txt — Easy installation of all needed Python libraries.
-
-📢 Important Notes
-Protect your API keys!
-Never upload config.py to GitHub unless you remove or hide your real API keys.
-
-Check OpenAI billing — API usage is paid after the free trial.
-
-Modularity is key — Always add new features as separate service/handler files.
-
-🎯 Future Roadmap Ideas
-🔥 Add Smart Home control commands ("Turn on lights", "Lock the door").
-
-🔥 Add Image Recognition (object detection in photos).
-
-🔥 Add Voice-to-Text transcription.
-
-🔥 Add Memory (store user preferences).
-
-🔥 Add Inline Buttons (Telegram keyboards).
+Built by Thai Son Pham as a personal AI smart home framework.
