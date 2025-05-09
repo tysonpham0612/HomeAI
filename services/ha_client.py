@@ -1,8 +1,8 @@
 import requests
-from configs.config import HA_BASE_URL, HA_TOKEN
+from configs.config import HA_URL, HA_TOKEN
 
 def send_ha_command(domain: str, service: str, entity_id: str):
-    url = f"{HA_BASE_URL}/api/services/{domain}/{service}"
+    url = f"{HA_URL}/api/services/{domain}/{service}"
     headers = {
         "Authorization": f"Bearer {HA_TOKEN}",
         "Content-Type": "application/json"

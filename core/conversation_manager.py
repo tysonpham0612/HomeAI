@@ -15,18 +15,19 @@ def init_conversation(user_id:int,bot_name:str="Luna")->list:
     return _conversations[user_id]
 
 MAX_HISTORY_LENGTH = 50
+
 async def check_and_summarize_if_needed(user_id: int):
     history = get_conversation(user_id)
     if len(history) > MAX_HISTORY_LENGTH:
-        from services.openai_client import summarize_conversation  # Local import to avoid circular
-
-        summary = await summarize_conversation(history[1:])  # exclude system message
-
-        # Replace long history with summary version
-        _conversations[user_id] = [
-            history[0],  # system prompt
-            {"role": "assistant", "content": f"Summary of earlier conversation:\n{summary}"}
-        ]
+        try:
+            from services.openai_client import summarize_conversation
+            summary = await summarize_conversation(history[1:])  # exclude system message
+            _conversations[user_id] = [
+                history[0],  # system prompt
+                {"role": "assistant", "content": f"Summary of earlier conversation:\n{summary}"}
+            ]
+        except Exception as e:
+            print(f"Summarization failed: {e}")
 
 def get_conversation(user_id: int) -> list:
    #Return full message history (including system prompt)

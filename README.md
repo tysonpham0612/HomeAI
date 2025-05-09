@@ -1,6 +1,6 @@
-Documentation for HomeAI (Luna)
+HomeAI (Luna) - Smart Home AI Assistant
 Overview
-HomeAI (Luna) is a modular, AI-powered smart home assistant designed to integrate with Home Assistant OS. It leverages advanced AI technologies like OpenAI's ChatGPT and Whisper for natural language understanding and voice transcription. Luna provides a seamless interface for controlling smart home devices, monitoring the environment, and engaging in natural conversations via platforms like Telegram.
+HomeAI (Luna) is a modular, AI-powered smart home assistant designed to integrate seamlessly with Home Assistant OS. It leverages OpenAI's ChatGPT and Whisper for natural language understanding and voice transcription, enabling users to control smart devices, monitor their environment, and engage in natural conversations via Telegram.
 
 Features
 AI Assistant: ChatGPT-powered assistant with memory for natural language interaction.
@@ -37,43 +37,54 @@ Project Structure
    configs: Stores environment variables and assistant profile settings.
    config.py: Loads API keys and tokens from a .env file.
    assistant_profile.py: Defines the assistant's personality, abilities, and behavior rules.
-6. Tests
-   tests: (Optional) Contains test files for validating services and core logic.
-   Setup Instructions
-7. Clone the Repository
-8. Create a Virtual Environment
-9. Install Dependencies
-10. Configure Environment Variables
-    Create a .env file in the project root with the following content:
 
-11. Run the Application
-    Usage
-    Telegram Commands
-    /start: Start the bot and receive a welcome message.
-    /help: Display available commands and usage instructions.
-    /reset: Reset the conversation history.
-    Natural Language Interaction
-    Send text or voice messages to the bot for:
-    Controlling smart devices (e.g., "Turn on the kitchen lights").
-    Asking general questions (e.g., "What's the weather today?").
-    Extending the Application
-    Adding a New Module
-    Create a new folder in modules (e.g., modules/image_recognition/).
-    Implement the module's logic.
-    Update the router or relevant handlers to integrate the new module.
-    Example: Adding Object Detection
-    Use YOLO or another object detection library.
-    Create a new module for processing images and returning detected objects.
-    Route image-related commands to this module.
-    Deployment
-    Run at Boot: Use a script like start_bot.sh or configure a crontab entry.
-    Docker Support: (Coming soon) Containerize the application for easier deployment.
-    Remote Access: Use Home Assistant's DuckDNS and HTTPS for secure remote access.
-    Notes
-    Ensure Home Assistant is running on the same network.
-    Register ESP32 devices via MQTT or ESPHome for seamless integration.
-    Prioritize local-first design for privacy and security.
-    Credits
-    Creator: Thai Son Pham
-    Location: Canada
-    Special Note: Designed with care to be a practical and friendly assistant for daily living.
+Usage
+Telegram Commands
+/start: Start the bot and receive a welcome message.
+/help: Display available commands and usage instructions.
+/reset: Reset the conversation history.
+Natural Language Interaction
+Send text or voice messages to the bot for:
+Controlling smart devices (e.g., "Turn on the kitchen lights").
+Asking general questions (e.g., "What's the weather today?").
+How It Works
+
+1. Text Message Flow
+   User Input: The user sends a text message to the bot.
+   Processing:
+   The message is handled by handle_text in text_chatgpt.py.
+   It calls process_user_text in intent_dispatcher.py to:
+   Append the message to the conversation history.
+   Send the conversation to ChatGPT for processing.
+   Parse the response to determine if it is a command or a natural reply.
+   Command Execution:
+   If it is a command, it is routed to Home Assistant via route_chatgpt_response in router.py.
+   Response:
+   The bot sends a confirmation or natural reply back to the user.
+2. Voice Message Flow
+   User Input: The user sends a voice message to the bot.
+   Processing:
+   The voice message is transcribed to text using Whisper in whisper_client.py.
+   The transcribed text is processed as a regular text message.
+   Extending the Application
+   Adding a New Module
+   Create a new folder in modules (e.g., modules/image_recognition/).
+   Implement the module's logic.
+   Update the router or relevant handlers to integrate the new module.
+   Example: Adding Object Detection
+   Use YOLO or another object detection library.
+   Create a new module for processing images and returning detected objects.
+   Route image-related commands to this module.
+   Deployment
+   Run at Boot: Use a script like start_bot.sh or configure a crontab entry.
+   Docker Support: (Coming soon) Containerize the application for easier deployment.
+   Remote Access: Use Home Assistant's DuckDNS and HTTPS for secure remote access.
+   Credits
+   Creator: Tyson Pham
+   Location: Canada
+   Special Note: Designed with care to be a practical and friendly assistant for daily living.
+   Future Enhancements
+   Add persistent storage for conversation history.
+   Implement advanced error handling and logging.
+   Add support for multiple AI models (e.g., Hugging Face).
+   Extend functionality with additional smart home integrations.
