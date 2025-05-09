@@ -10,26 +10,50 @@ openai.api_key = OPENAI_API_KEY
 
 async def get_chatgpt_response(user_id: int, user_input: str) -> str:
   
-    # Get ChatGPT response, maintaining conversation context for each user.
+    """
+    Sends the full conversation history (including system prompt) to OpenAI's API
+    and returns the assistant's raw JSON-formatted response as a string.
+
+    Args:
+        user_id (int): The Telegram user ID
+        user_input (str): The latest user message (already stored in memory)
+
+    Returns:
+        str: JSON-formatted string response from GPT (structured intent + reply)
+    """
  
-    # Step 1: Update conversation with new user message
-    append_user_message(user_id, user_input)
+    # 1. Get the full conversation history for the user
+    messages = get_conversation(user_id)
 
-    # Step 2: Fetch conversation history
-    conversation = get_conversation(user_id)
-
-    # Step 3: Send full conversation history to ChatGPT
-    response =  openai.chat.completions.create(
+    # 2. Send it to OpenAI's ChatCompletion API
+    response = await openai.ChatCompletion.acreate(
         model="gpt-3.5-turbo",
-        messages=conversation,
-        temperature=0.7,
-        max_tokens=300,
+        messages=messages,
+        temperature=0.5
     )
 
-    # Step 4: Extract bot reply
-    bot_reply = response.choices[0].message.content.strip()
+    # 3. Return the assistant's response as plain text
+    return response.choices[0].message.content.strip()
 
-    # Step 5: Add bot reply to conversation history
-    append_bot_message(user_id, bot_reply)
 
-    return bot_reply
+async def summarize_conversation(messages: list)->str:
+    # Summarizes a long list of chat messages into a short assistant-readable format.
+
+    # Args:
+    #     messages (list): Full conversation history including system, user, and assistant roles.
+
+    # Returns:
+    #     str: Summary text of the earlier part of the conversation.
+    # """
+    summary_prompt = [
+        {"role": "system", "content": "You are an assistant that summarizes conversations for future AI context."},
+        {"role": "user", "content": f"Summarize this conversation for context:\n{messages}"}
+    ]
+
+    response = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",
+        messages=summary_prompt,
+        temperature=0.3,
+        max_tokens = 300,
+    )
+    return response.choices[0].message.content.strip()

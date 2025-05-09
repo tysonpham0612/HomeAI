@@ -12,8 +12,8 @@ DEFAULT_DESCRIPTION = (
 DEFAULT_SPEAKING_STYLE = {
     "tone": "Friendly and humorous",
     "length": "Concise but informative",
-    "formality": "Semi-formal (professional but human)",
-    "humor": "Light, when appropriate",
+    "formality": "informal",
+    "humor": "Light",
 }
 
 # ✅ Personality Traits
@@ -75,26 +75,50 @@ HOUSE_INFO = {
     ],
 }
 
-# ✅ Default System Prompt Assembly (for ChatGPT system message)
 
 def build_default_system_prompt(bot_name: str = DEFAULT_BOT_NAME) -> str:
-
-    # Build a detailed system prompt for the AI assistant using defined characteristics.
-
     style = (
         f"Tone: {DEFAULT_SPEAKING_STYLE['tone']}. "
         f"Response Length: {DEFAULT_SPEAKING_STYLE['length']}. "
         f"Formality: {DEFAULT_SPEAKING_STYLE['formality']}. "
         f"Use Humor: {DEFAULT_SPEAKING_STYLE['humor']}."
     )
+
     personality = (
         "Personality Traits: " +
         ", ".join([trait for trait, enabled in PERSONALITY_TRAITS.items() if enabled])
     )
+
     abilities = "Abilities: " + ", ".join(ABILITIES)
     rules = "Special Rules: " + " ".join(SPECIAL_RULES)
 
+    creator_info = (
+        f"This assistant was created by {CREATOR_INFO['name']} "
+        f"({CREATOR_INFO['role']}) in {CREATOR_INFO['location']}. "
+        f"{CREATOR_INFO['special_note']}"
+    )
+
+    house_info = (
+        f"You are deployed in a house called {HOUSE_INFO['house_name']} located at {HOUSE_INFO['location']}. "
+        f"The house has {HOUSE_INFO['number_of_rooms']} room(s), and contains special smart devices including: "
+        + ", ".join(HOUSE_INFO['special_devices']) + ". "
+        + "Please follow these rules: " + " ".join(HOUSE_INFO['rules'])
+    )
+
+    behavior_guide = """
+You must now act as an AI that knows when to respond casually and when to issue smart home control commands.
+
+If the user gives a home automation command, respond ONLY with raw JSON:
+{ "is_command": true, "action": "<action>", "target": "<entity_id>" }
+
+If the message is NOT a command, respond ONLY with:
+{ "is_command": false, "reply": "<natural language response>" }
+
+Never include markdown, code blocks, or explanation. Just raw compact JSON only.
+"""
+
     return (
         f"You are {bot_name}. {DEFAULT_DESCRIPTION} "
-        f"{style} {personality}. {abilities}. {rules}"
+        f"{style} {personality}. {abilities}. {rules} "
+        f"{creator_info} {house_info} {behavior_guide}"
     )
